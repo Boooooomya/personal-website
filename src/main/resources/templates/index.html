@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${personal.name} + ' | Portfolio'"></title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --secondary: #64748b;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --accent: #818cf8;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .layout-wrapper {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            min-height: 100vh;
+            max-width: 1400px;
+            margin: 0 auto;
+            gap: 2rem;
+            padding: 2rem;
+        }
+
+        /* Sidebar Styling */
+        .sidebar {
+            position: sticky;
+            top: 2rem;
+            height: calc(100vh - 4rem);
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .profile-card {
+            background: var(--card-bg);
+            padding: 2.5rem 2rem;
+            border-radius: 1.5rem;
+            box-shadow: var(--shadow-lg);
+            text-align: center;
+            border: 1px solid var(--border);
+        }
+
+        .profile-img {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: 50%;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3rem;
+            font-weight: 700;
+            box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.4);
+        }
+
+        .profile-name {
+            font-size: 1.75rem;
+            font-weight: 800;
+            letter-spacing: -0.025em;
+            margin-bottom: 0.5rem;
+            color: var(--text-main);
+        }
+
+        .profile-title {
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+            padding: 0.25rem 1rem;
+            background: #eef2ff;
+            border-radius: 9999px;
+            display: inline-block;
+        }
+
+        .contact-list {
+            text-align: left;
+            margin-top: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            transition: color 0.2s;
+            text-decoration: none;
+        }
+        
+        .contact-item:hover {
+            color: var(--primary);
+        }
+
+        .contact-item i {
+            color: var(--primary);
+            width: 18px;
+            height: 18px;
+        }
+
+        /* Main Content Styling */
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        section {
+            background: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: 1.5rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 2rem;
+        }
+
+        .section-header i {
+            color: var(--primary);
+            background: #eef2ff;
+            padding: 0.5rem;
+            border-radius: 0.75rem;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+        }
+
+        .bio-text {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            line-height: 1.8;
+        }
+
+        /* Skills Grid */
+        .skills-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .skill-group h3 {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+
+        .tag {
+            background: #f1f5f9;
+            color: var(--text-main);
+            padding: 0.5rem 1rem;
+            border-radius: 0.75rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            border: 1px solid var(--border);
+            transition: all 0.2s;
+        }
+
+        .tag:hover {
+            border-color: var(--primary);
+            background: #eef2ff;
+            color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        /* Timeline / Experience */
+        .timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            position: relative;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0.75rem;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--border);
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-left: 2.5rem;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: 0.45rem;
+            top: 0.5rem;
+            width: 12px;
+            height: 12px;
+            background: var(--primary);
+            border: 3px solid white;
+            border-radius: 50%;
+            z-index: 1;
+            box-shadow: 0 0 0 3px #eef2ff;
+        }
+
+        .timeline-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-title {
+            font-weight: 700;
+            font-size: 1.125rem;
+        }
+
+        .timeline-date {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .timeline-org {
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 0.75rem;
+        }
+
+        /* Projects Grid */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .project-card {
+            padding: 1.5rem;
+            border-radius: 1rem;
+            border: 1px solid var(--border);
+            transition: all 0.3s;
+        }
+
+        .project-card:hover {
+            border-color: var(--primary);
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-4px);
+        }
+
+        .project-title {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .project-tech {
+            font-size: 0.8rem;
+            color: var(--primary);
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        @media (max-width: 1024px) {
+            .layout-wrapper {
+                grid-template-columns: 1fr;
+            }
+            .sidebar {
+                position: static;
+                height: auto;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .timeline-header {
+                flex-direction: column;
+                gap: 0.25rem;
+            }
+            .layout-wrapper {
+                padding: 1rem;
+            }
+            section {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="layout-wrapper">
+        <aside class="sidebar">
+            <div class="profile-card">
+                <div class="profile-img">
+                    <span th:text="${#strings.substring(personal.name, 0, 1)}">P</span>
+                </div>
+                <h1 class="profile-name" th:text="${personal.name}">姓名</h1>
+                <p class="profile-title" th:text="${personal.title}">職稱</p>
+                
+                <div class="contact-list">
+                    <a th:href="'mailto:' + ${personal.email}" class="contact-item">
+                        <i data-lucide="mail"></i>
+                        <span th:text="${personal.email}">email</span>
+                    </a>
+                    <div class="contact-item">
+                        <i data-lucide="phone"></i>
+                        <span th:text="${personal.phone}">phone</span>
+                    </div>
+                    <div class="contact-item">
+                        <i data-lucide="map-pin"></i>
+                        <span th:text="${personal.location}">location</span>
+                    </div>
+                    <a th:if="${personal.github}" th:href="${personal.github}" target="_blank" class="contact-item">
+                        <i data-lucide="github"></i>
+                        <span>GitHub Profile</span>
+                    </a>
+                </div>
+            </div>
+
+            <section id="skills" style="margin-bottom: 0; flex-grow: 1;">
+                <div class="section-header" style="margin-bottom: 1.5rem;">
+                    <i data-lucide="layers" style="width: 18px; height: 18px;"></i>
+                    <h2 style="font-size: 1.1rem;">專業技能</h2>
+                </div>
+                <div class="skills-container">
+                    <div th:each="group : ${skillGroups}" class="skill-group">
+                        <h3 th:text="${group.key}">分類</h3>
+                        <div class="tags">
+                            <span th:each="skill : ${group.value}" class="tag" th:text="${skill}">技能</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </aside>
+
+        <main class="main-content">
+            <section id="bio">
+                <div class="section-header">
+                    <i data-lucide="user"></i>
+                    <h2>關於我</h2>
+                </div>
+                <p class="bio-text" th:text="${personal.bio}">個人簡介內容...</p>
+            </section>
+
+            <section id="experience">
+                <div class="section-header">
+                    <i data-lucide="briefcase"></i>
+                    <h2>工作經驗</h2>
+                </div>
+                <div class="timeline">
+                    <div th:each="exp : ${experiences}" class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-header">
+                            <span class="timeline-title" th:text="${exp.title}">職位</span>
+                            <span class="timeline-date" th:text="${exp.date}">時間</span>
+                        </div>
+                        <div class="timeline-org" th:text="${exp.org}">機構</div>
+                        <p class="bio-text" style="font-size: 0.95rem;" th:text="${exp.desc}">描述</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="projects">
+                <div class="section-header">
+                    <i data-lucide="code-2"></i>
+                    <h2>專案經驗</h2>
+                </div>
+                <div class="projects-grid">
+                    <div th:each="project : ${projects}" class="project-card">
+                        <div class="project-title">
+                            <span th:text="${project.title}">專案名稱</span>
+                            <i data-lucide="external-link" style="width: 16px; color: var(--secondary);"></i>
+                        </div>
+                        <div class="project-tech" th:text="${project.org}">技術</div>
+                        <p class="bio-text" style="font-size: 0.9rem;" th:text="${project.desc}">描述</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="education">
+                <div class="section-header">
+                    <i data-lucide="graduation-cap"></i>
+                    <h2>教育背景</h2>
+                </div>
+                <div class="timeline">
+                    <div th:each="edu : ${educationList}" class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-header">
+                            <span class="timeline-title" th:text="${edu.title}">學位</span>
+                            <span class="timeline-date" th:text="${edu.date}">時間</span>
+                        </div>
+                        <div class="timeline-org" th:text="${edu.org}">學校</div>
+                        <p class="bio-text" style="font-size: 0.95rem;" th:text="${edu.desc}">描述</p>
+                    </div>
+                </div>
+            </section>
+
+            <footer style="text-align: center; color: var(--text-muted); padding: 1rem 0; font-size: 0.875rem;">
+                <p>© <span th:text="${#calendars.format(#calendars.createNow(), 'yyyy')}"></span> <span th:text="${personal.name}"></span>. Powered by Spring Boot.</p>
+            </footer>
+        </main>
+    </div>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>
